@@ -5,10 +5,10 @@ class InMemoryDatabase {
         this.data = [];
     }
 
-    create(record) {
+    create(data) {
         return new Promise(resolve => {
             const newID = uuidV4();
-            this.data.push({ id: newID, ...record });
+            this.data.push({ id: newID, ...data });
             resolve(newID);
         });
     }
@@ -19,10 +19,27 @@ class InMemoryDatabase {
         });
     }
 
-    findById(userId) {
+    findById(id) {
         return new Promise(resolve => {
-            const user = this.data.find(user => user.id === userId);
+            const user = this.data.find(elem => elem.id === id);
             resolve(user);
+        });
+    }
+
+    update(id, data) {
+        return new Promise(resolve => {
+            const index = this.data.findIndex(elem => elem.id === id);
+
+            this.data[index] = { id, ...data };
+
+            resolve(this.data[index]);
+        });
+    }
+
+    delete(id) {
+        return new Promise(resolve => {
+            this.data = this.data.filter(elem => elem.id !== id);
+            resolve();
         });
     }
 }
