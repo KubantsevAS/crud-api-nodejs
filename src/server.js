@@ -1,6 +1,7 @@
 import http from 'node:http';
 import dotenv from 'dotenv';
 import process from 'node:process';
+import { apiUsersUuidRegex } from './utils/apiUserUuidRegex.js';
 import {
     getAllUsers,
     getUser,
@@ -18,10 +19,7 @@ const server = http.createServer((req, res) => {
         return;
     }
 
-    if (
-        req.url.match(/^\/api\/users\/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i)
-        && req.method === 'GET'
-    ) {
+    if (req.url.match(apiUsersUuidRegex) && req.method === 'GET') {
         const id = req.url.split('/').pop();
         getUser(res, id);
 
@@ -34,20 +32,14 @@ const server = http.createServer((req, res) => {
         return;
     }
 
-    if (
-        req.url.match(/^\/api\/users\/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i)
-        && req.method === 'PUT'
-    ) {
+    if (req.url.match(apiUsersUuidRegex) && req.method === 'PUT') {
         const id = req.url.split('/').pop();
         updateUser(req, res, id);
 
         return;
     }
 
-    if (
-        req.url.match(/^\/api\/users\/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i)
-        && req.method === 'DELETE'
-    ) {
+    if (req.url.match(apiUsersUuidRegex) && req.method === 'DELETE') {
         const id = req.url.split('/').pop();
         deleteUser(res, id);
 
@@ -58,4 +50,6 @@ const server = http.createServer((req, res) => {
     res.end(JSON.stringify({ message: 'Error', url: `${req.url}`, method: `${req.method}` }));
 });
 
-server.listen(process.env.PORT, () => {});
+const PORT = process.env.PORT ?? 5000;
+
+server.listen(PORT, () => {});

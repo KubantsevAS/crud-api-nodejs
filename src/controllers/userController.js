@@ -1,117 +1,99 @@
 import { getPostData } from '../utils/getPostData.js';
 import UserDb from '../database/inMemoryDatabase.js';
-import { validate as isUuid } from 'uuid';
+import { validateUuid, validateUserData } from '../utils/validation.js';
+import { sendResponse, sendError } from '../utils/responseHandler.js';
 
-export const getAllUsers = async response => {
+export const getAllUsers = async (response) => {
     try {
         const users = await UserDb.getAll();
 
-        response.writeHead(200, { 'Content-Type': 'application/json' });
-        response.end(JSON.stringify(users));
-    } catch (error) {
-        console.log(error);
+        sendResponse(response, 200, users);
+    } catch {
+        sendError(response, 500, 'Internal server error');
     }
 };
 
 export const getUser = async (response, id) => {
     try {
-        if (!isUuid(id)) {
-            response.writeHead(400, { 'Content-Type': 'application/json' });
-            response.end(JSON.stringify({ message: 'User nor found', id }));
-
-            return;
-        }
-
+        validateUuid(id);
         const user = await UserDb.findById(id);
 
         if (!user) {
-            response.writeHead(404, { 'Content-Type': 'application/json' });
-            response.end(JSON.stringify({ message: 'User nor found', id }));
-
-            return;
+            return sendError(response, 404, 'User not found');
         }
 
-        response.writeHead(200, { 'Content-Type': 'application/json' });
-        response.end(JSON.stringify(user));
+        sendResponse(response, 200, user);
     } catch (error) {
-        console.log(error);
+        if (error.message === 'Invalid UUID format') {
+            return sendError(response, 400, error.message);
+        }
+
+        sendError(response, 500, 'Internal server error');
     }
 };
 
 export const createUser = async (request, response) => {
     try {
         const body = await getPostData(request);
-        const user = JSON.parse(body);
-        const newId = await UserDb.create(user);
+        const userData = JSON.parse(body);
 
-        response.writeHead(201, { 'Content-Type': 'application/json' });
+        validateUserData(userData);
+        const newId = await UserDb.create(userData);
 
-        return response.end(JSON.stringify(newId));
+        sendResponse(response, 201, newId);
     } catch (error) {
-        console.log(error);
+        if (error.message.includes('must be')) {
+            return sendError(response, 400, error.message);
+        }
+
+        sendError(response, 500, 'Internal server error');
     }
 };
 
 export const updateUser = async (request, response, id) => {
     try {
-        if (!isUuid(id)) {
-            response.writeHead(400, { 'Content-Type': 'application/json' });
-            response.end(JSON.stringify({ message: 'User nor found', id }));
-
-            return;
-        }
-
+        validateUuid(id);
         const user = await UserDb.findById(id);
 
         if (!user) {
-            response.writeHead(404, { 'Content-Type': 'application/json' });
-            response.end(JSON.stringify({ message: 'User nor found', id }));
-
-            return;
+            return sendError(response, 404, 'User not found');
         }
 
         const body = await getPostData(request);
-        const { username, age, hobbies } = JSON.parse(body);
+        const updateData = JSON.parse(body);
 
-        const updatedData = {
-            username: username ?? user.username,
-            age: age ?? user.age,
-            hobbies: hobbies ?? user.hobbies,
-        };
+        const updatedUser = await UserDb.update(id, {
+            ...user,
+            ...updateData,
+        });
 
-        const updatedUser = await UserDb.update(id, updatedData);
-
-        response.writeHead(201, { 'Content-Type': 'application/json' });
-
-        return response.end(JSON.stringify(updatedUser));
+        sendResponse(response, 200, updatedUser);
     } catch (error) {
-        console.log(error);
+        if (error.message === 'Invalid UUID format') {
+            return sendError(response, 400, error.message);
+        }
+
+        sendError(response, 500, 'Internal server error');
     }
 };
 
 export const deleteUser = async (response, id) => {
     try {
-        if (!isUuid(id)) {
-            response.writeHead(400, { 'Content-Type': 'application/json' });
-            response.end(JSON.stringify({ message: 'User nor found', id }));
-
-            return;
-        }
-
+        validateUuid(id);
         const user = await UserDb.findById(id);
 
         if (!user) {
-            response.writeHead(404, { 'Content-Type': 'application/json' });
-            response.end(JSON.stringify({ message: 'User nor found', id }));
-
-            return;
+            return sendError(response, 404, 'User not found');
         }
 
         await UserDb.delete(id);
 
-        response.writeHead(200, { 'Content-Type': 'application/json' });
-        response.end(JSON.stringify({ message: `User ${id} removed` }));
+        sendResponse(response, 204);
     } catch (error) {
-        console.log(error);
+        if (error.message === 'Invalid UUID format') {
+            return sendError(response, 400, error.message);
+        }
+
+        sendError(response, 500, 'Internal server error');
     }
 };
