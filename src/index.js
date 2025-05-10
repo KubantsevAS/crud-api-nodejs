@@ -1,7 +1,7 @@
 import http from 'node:http';
 import dotenv from 'dotenv';
 import process from 'node:process';
-import { getAllUsers, getUser } from './controllers/userController.js';
+import { getAllUsers, getUser, createUser } from './controllers/userController.js';
 
 dotenv.config();
 
@@ -15,6 +15,12 @@ const server = http.createServer((req, res) => {
     if (req.url.match(/\/api\/users\/([0-9]+)/) && req.method === 'GET') {
         const id = req.url.split('/').pop();
         getUser(res, id);
+
+        return;
+    }
+
+    if (req.method === 'POST' && req.url === '/api/users') {
+        createUser(req, res);
 
         return;
     }
