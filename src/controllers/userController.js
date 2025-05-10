@@ -38,9 +38,9 @@ export const createUser = async (request, response) => {
         const userData = JSON.parse(body);
 
         validateUserData(userData);
-        const newId = await UserDb.create(userData);
+        const newUser = await UserDb.create(userData);
 
-        sendResponse(response, 201, newId);
+        sendResponse(response, 201, newUser);
     } catch (error) {
         if (error.message.includes('must be')) {
             return sendError(response, 400, error.message);

@@ -8,8 +8,11 @@ class InMemoryDatabase {
     create(data) {
         return new Promise(resolve => {
             const newID = uuidV4();
-            this.data.push({ id: newID, ...data });
-            resolve(newID);
+            const newDataElem = { id: newID, ...data };
+
+            this.data.push(newDataElem);
+
+            resolve(newDataElem);
         });
     }
 

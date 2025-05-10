@@ -1,12 +1,16 @@
 # TODO
 
-6 - webpack.
-7 - test.
-8 - cluster <https://www.youtube.com/watch?v=6lHvks6R6cI>
+- [ ] 6 - webpack.  
+- [ ] 7 - test.  
+- [ ] 8 - cluster <https://www.youtube.com/watch?v=6lHvks6R6cI>  
 
-+ Typescript
+---
 
-Eslint partially not working
+- [ ] Typescript
+
+---
+
+- [ ] Eslint partially not working
 
 Test body:
 
