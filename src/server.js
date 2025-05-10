@@ -2,6 +2,7 @@ import http from 'node:http';
 import dotenv from 'dotenv';
 import process from 'node:process';
 import { apiUsersUuidRegex } from './utils/apiUserUuidRegex.js';
+import { sendError } from './utils/responseHandler.js';
 import {
     getAllUsers,
     getUser,
@@ -46,8 +47,7 @@ const server = http.createServer((req, res) => {
         return;
     }
 
-    res.writeHead(404, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ message: 'Error', url: `${req.url}`, method: `${req.method}` }));
+    sendError(res, 404, 'Page not found');
 });
 
 const PORT = process.env.PORT ?? 5000;
