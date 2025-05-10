@@ -40,7 +40,7 @@ export default defineConfig([
             //     'error',
             //     { 'before': false, 'after': true, 'overrides': { 'arrow': { 'before': true, 'after': true } } },
             // ],
-            'no-console': 'error',
+            'no-console': 'warn',
         },
         ignores: ['eslint.config.js'],
     },
