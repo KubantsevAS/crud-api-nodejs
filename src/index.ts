@@ -1,6 +1,6 @@
 import http, { IncomingMessage, ServerResponse } from 'http';
+import process from 'process';
 import dotenv from 'dotenv';
-import process from 'node:process';
 import { apiUsersUuidRegex } from './utils/apiUserUuidRegex';
 import { sendError } from './utils/responseHandler';
 import {

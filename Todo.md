@@ -1,12 +1,12 @@
 # TODO
 
-- [ ] 6 - webpack.  
+- [x] 6 - webpack.  
 - [ ] 7 - test.  
 - [ ] 8 - cluster <https://www.youtube.com/watch?v=6lHvks6R6cI>  
 
 ---
 
-- [ ] Typescript
+- [x] Typescript
 
 ---
 
