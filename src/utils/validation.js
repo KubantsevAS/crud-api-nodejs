@@ -11,15 +11,19 @@ export const validateUuid = (id) => {
 export const validateUserData = (userData) => {
     const { username, age, hobbies } = userData;
 
-    if (username && typeof username !== 'string') {
+    if (!username || !age || !hobbies) {
+        throw new Error('All required properties (username, age, hobbies) must be specified');
+    }
+
+    if (typeof username !== 'string') {
         throw new Error('Username must be a string');
     }
 
-    if (age && (typeof age !== 'number' || age < 0)) {
+    if (typeof age !== 'number' || age < 0) {
         throw new Error('Age must be a positive number');
     }
 
-    if (hobbies && (!Array.isArray(hobbies) || !hobbies.every(hobby => typeof hobby === 'string'))) {
+    if (!Array.isArray(hobbies) || !hobbies.every(hobby => typeof hobby === 'string')) {
         throw new Error('Hobbies must be an array of strings');
     }
 };
