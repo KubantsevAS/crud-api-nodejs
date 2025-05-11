@@ -1,6 +1,7 @@
 import { validate as isUuid } from 'uuid';
+import { UserRequestBody } from '../types';
 
-export const validateUuid = (id) => {
+export const validateUuid = (id: string): boolean => {
     if (!isUuid(id)) {
         throw new Error('Invalid UUID format');
     }
@@ -8,7 +9,7 @@ export const validateUuid = (id) => {
     return true;
 };
 
-export const validateUserData = (userData) => {
+export const validateUserData = (userData: UserRequestBody): void => {
     const { username, age, hobbies } = userData;
 
     if (!username || !age || !hobbies) {

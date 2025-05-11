@@ -1,19 +1,36 @@
 import { defineConfig } from 'eslint/config';
 import globals from 'globals';
 import js from '@eslint/js';
+import tseslint from '@typescript-eslint/eslint-plugin';
+import tsParser from '@typescript-eslint/parser';
 
 export default defineConfig([
     {
+        ignores: ['dist/**', 'eslint.config.js'],
         files: ['**/*.js', '**/*.ts'],
+        languageOptions: {
+            parser: tsParser,
+            parserOptions: {
+                project: './tsconfig.json',
+                tsconfigRootDir: '.',
+                sourceType: 'module',
+            },
+            globals: {
+                ...globals.node,
+            },
+        },
         plugins: {
+            '@typescript-eslint': tseslint,
             js,
         },
-        languageOptions: { globals: globals.browser },
         extends: ['js/recommended'],
         rules: {
+            ...tseslint.configs.recommended.rules,
+            '@typescript-eslint/no-explicit-any': 'error',
+            '@typescript-eslint/explicit-function-return-type': 'error',
+            '@typescript-eslint/no-unused-vars': 'error',
             'array-bracket-spacing': ['error', 'never'],
             'eol-last': 'error',
-            'jsx-quotes': ['error', 'prefer-single'],
             'max-len': ['error', { 'code': 120 }],
             'no-multi-spaces': 'error',
             'no-multiple-empty-lines': ['error', { 'max': 1, 'maxEOF': 0, 'maxBOF': 0 }],
@@ -25,7 +42,6 @@ export default defineConfig([
             'space-in-parens': 'error',
             'comma-dangle': ['error', 'always-multiline'],
             'indent': ['error', 4, { SwitchCase: 1 }],
-            // 'member-delimiter-style': 'error',
             'no-extra-semi': 'error',
             'object-curly-newline': ['error', { 'multiline': true, 'minProperties': 4, 'consistent': true }],
             'object-curly-spacing': ['error', 'always'],
@@ -36,12 +52,7 @@ export default defineConfig([
             'quotes': ['error', 'single'],
             'semi': 'error',
             'space-before-blocks': 'error',
-            // 'type-annotation-spacing': [
-            //     'error',
-            //     { 'before': false, 'after': true, 'overrides': { 'arrow': { 'before': true, 'after': true } } },
-            // ],
             'no-console': 'warn',
         },
-        ignores: ['eslint.config.js'],
     },
 ]);

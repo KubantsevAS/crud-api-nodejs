@@ -1,4 +1,6 @@
-export const getPostData = request => {
+import { IncomingMessage } from 'http';
+
+export const getPostData = (request: IncomingMessage): Promise<string> => {
     return new Promise((resolve, reject) => {
         try {
             let body ='';
