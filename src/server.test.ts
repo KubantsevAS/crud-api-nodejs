@@ -26,14 +26,14 @@ describe('Server API', () => {
                     id: '1',
                     username: 'John',
                     age: 30,
-                    hobbies: ['reading', 'gaming']
+                    hobbies: ['reading', 'gaming'],
                 },
                 {
                     id: '2',
                     username: 'Jane',
                     age: 25,
-                    hobbies: ['swimming']
-                }
+                    hobbies: ['swimming'],
+                },
             ];
 
             (UserDb.getAll as jest.Mock).mockResolvedValue(mockUsers);
@@ -57,18 +57,18 @@ describe('Server API', () => {
             expect(response.body).toEqual({
                 status: 'error',
                 message: 'Internal server error',
-                timestamp: expect.any(String)
+                timestamp: expect.any(String),
             });
         });
     });
 
     describe('A new object is created by a POST /api/users request', () => {
         test('should return new user', async () => {
-            const mockUser ={
+            const mockUser = {
                 id: '3',
                 username: 'John',
                 age: 30,
-                hobbies: ['reading', 'gaming']
+                hobbies: ['reading', 'gaming'],
             };
 
             (UserDb.create as jest.Mock).mockResolvedValue(mockUser);
@@ -100,7 +100,7 @@ describe('Server API', () => {
             expect(response.body).toEqual({
                 status: 'error',
                 message: 'All required properties (username, age, hobbies) must be specified',
-                timestamp: expect.any(String)
+                timestamp: expect.any(String),
             });
         });
     });
@@ -112,7 +112,7 @@ describe('Server API', () => {
                 id: newID,
                 username: 'John',
                 age: 30,
-                hobbies: ['reading', 'gaming']
+                hobbies: ['reading', 'gaming'],
             };
 
             (UserDb.findById as jest.Mock).mockResolvedValue(mockUser);
@@ -129,7 +129,7 @@ describe('Server API', () => {
             (validateUuid as jest.Mock).mockImplementation(() => {
                 throw new Error('Invalid UUID format');
             });
-            
+
             const response = await request(serverInstance)
                 .get('/api/users/invalid-uuid-format')
                 .expect('Content-Type', /json/)
@@ -138,7 +138,7 @@ describe('Server API', () => {
             expect(response.body).toEqual({
                 status: 'error',
                 message: 'Invalid UUID format',
-                timestamp: expect.any(String)
+                timestamp: expect.any(String),
             });
 
             expect(validateUuid).toHaveBeenCalledWith('invalid-uuid-format');
@@ -156,7 +156,7 @@ describe('Server API', () => {
             expect(responseFormatGet.body).toEqual({
                 status: 'error',
                 message: 'User not found',
-                timestamp: expect.any(String)
+                timestamp: expect.any(String),
             });
         });
     });
@@ -168,13 +168,13 @@ describe('Server API', () => {
                 id: userId,
                 username: 'John',
                 age: 32,
-                hobbies: ['reading', 'gaming']
+                hobbies: ['reading', 'gaming'],
             };
             const mockRefreshedUser = {
                 id: userId,
                 username: 'Gale',
                 age: 25,
-                hobbies: ['hockey', 'ski']
+                hobbies: ['hockey', 'ski'],
             };
 
             (UserDb.findById as jest.Mock).mockResolvedValue(mockUser);
@@ -185,7 +185,7 @@ describe('Server API', () => {
                 .send({
                     username: 'Gale',
                     age: 25,
-                    hobbies: ['hockey', 'ski']
+                    hobbies: ['hockey', 'ski'],
                 })
                 .expect('Content-Type', /json/)
                 .expect(200);
@@ -201,9 +201,9 @@ describe('Server API', () => {
                 id: userId,
                 username: 'John',
                 age: 32,
-                hobbies: ['reading']
+                hobbies: ['reading'],
             };
-            
+
             (UserDb.findById as jest.Mock).mockResolvedValue(mockUser);
             (UserDb.delete as jest.Mock).mockImplementation(() => {});
 

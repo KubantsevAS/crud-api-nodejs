@@ -6,7 +6,7 @@ import tsParser from '@typescript-eslint/parser';
 
 export default defineConfig([
     {
-        ignores: ['dist/**', 'eslint.config.js'],
+        ignores: ['dist/**', 'eslint.config.js', 'webpack.config.js'],
         files: ['**/*.js', '**/*.ts'],
         languageOptions: {
             parser: tsParser,
@@ -17,6 +17,7 @@ export default defineConfig([
             },
             globals: {
                 ...globals.node,
+                ...globals.jest,
             },
         },
         plugins: {
@@ -53,6 +54,18 @@ export default defineConfig([
             'semi': 'error',
             'space-before-blocks': 'error',
             'no-console': 'warn',
+        },
+    },
+    {
+        files: ['**/*.test.ts', '**/*.spec.ts'],
+        languageOptions: {
+            globals: {
+                ...globals.jest,
+            },
+        },
+        rules: {
+            '@typescript-eslint/explicit-function-return-type': 'off',
+            'max-len': 'off',
         },
     },
 ]);
