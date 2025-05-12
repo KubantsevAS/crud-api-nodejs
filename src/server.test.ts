@@ -36,30 +36,24 @@ describe('Server API', () => {
                 }
             ];
 
-            // Mock the database response
             (UserDb.getAll as jest.Mock).mockResolvedValue(mockUsers);
 
-            // Make the request
             const response = await request(serverInstance)
                 .get('/api/users')
                 .expect('Content-Type', /json/)
                 .expect(200);
 
-            // Assert the response
             expect(response.body).toEqual(mockUsers);
         });
 
         test('should handle server error', async () => {
-            // Mock database error
             (UserDb.getAll as jest.Mock).mockRejectedValue(new Error('Database error'));
 
-            // Make the request
             const response = await request(serverInstance)
                 .get('/api/users')
                 .expect('Content-Type', /json/)
                 .expect(500);
 
-            // Assert the error response
             expect(response.body).toEqual({
                 status: 'error',
                 message: 'Internal server error',
@@ -148,6 +142,74 @@ describe('Server API', () => {
             });
 
             expect(validateUuid).toHaveBeenCalledWith('invalid-uuid-format');
+        });
+
+        test('should handle error on getting deleted user', async () => {
+            const userId = uuidV4();
+            (UserDb.findById as jest.Mock).mockImplementation(undefined);
+
+            const responseFormatGet = await request(serverInstance)
+                .get(`/api/users/${userId}`)
+                .expect('Content-Type', /json/)
+                .expect(404);
+
+            expect(responseFormatGet.body).toEqual({
+                status: 'error',
+                message: 'User not found',
+                timestamp: expect.any(String)
+            });
+        });
+    });
+
+    describe('Update record by a PUT /api/users/{userId} request', () => {
+        test('should return user with updated data', async () => {
+            const userId = uuidV4();
+            const mockUser = {
+                id: userId,
+                username: 'John',
+                age: 32,
+                hobbies: ['reading', 'gaming']
+            };
+            const mockRefreshedUser = {
+                id: userId,
+                username: 'Gale',
+                age: 25,
+                hobbies: ['hockey', 'ski']
+            };
+
+            (UserDb.findById as jest.Mock).mockResolvedValue(mockUser);
+            (UserDb.update as jest.Mock).mockResolvedValue(mockRefreshedUser);
+
+            const response = await request(serverInstance)
+                .put(`/api/users/${userId}`)
+                .send({
+                    username: 'Gale',
+                    age: 25,
+                    hobbies: ['hockey', 'ski']
+                })
+                .expect('Content-Type', /json/)
+                .expect(200);
+
+            expect(response.body).toEqual(mockRefreshedUser);
+        });
+    });
+
+    describe('Delete record by a DELETE /api/users/{userId} request', () => {
+        test('should resolve delete user with code 204', async () => {
+            const userId = uuidV4();
+            const mockUser = {
+                id: userId,
+                username: 'John',
+                age: 32,
+                hobbies: ['reading']
+            };
+            
+            (UserDb.findById as jest.Mock).mockResolvedValue(mockUser);
+            (UserDb.delete as jest.Mock).mockImplementation(() => {});
+
+            await request(serverInstance)
+                .delete(`/api/users/${userId}`)
+                .expect(204);
         });
     });
 });

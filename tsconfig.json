@@ -10,5 +10,11 @@
         "strict": true,
         "skipLibCheck": true
     },
-    "include": ["src/**/*", "tsconfig.json"],
+    "include": [
+        "src/**/*",
+        "tsconfig.json",
+        "webpack.config.js",
+        "jest.config.js",
+        "eslint.config.json"
+    ],
 }
