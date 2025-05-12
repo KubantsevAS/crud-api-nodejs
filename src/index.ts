@@ -13,7 +13,7 @@ import {
 
 dotenv.config();
 
-const server = http.createServer((req: IncomingMessage, res: ServerResponse) => {
+export const server = http.createServer((req: IncomingMessage, res: ServerResponse) => {
     if (req.url === '/api/users' && req.method === 'GET') {
         getAllUsers(res);
 
